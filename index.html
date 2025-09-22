@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+  <title>Simple Image Animator</title>
+  <style>
+    body { text-align:center; background:#eee; font-family:sans-serif; }
+    canvas { background:#222; margin-top:20px; border-radius:8px; }
+  </style>
+</head>
+<body>
+  <h1>Simple Image Animator</h1>
+  <p>Upload an image, it will move automatically.</p>
+  <input type="file" id="file" accept="image/*"><br>
+  <canvas id="c" width="500" height="400"></canvas>
+
+  <script>
+    const fileEl = document.getElementById("file");
+    const canvas = document.getElementById("c");
+    const ctx = canvas.getContext("2d");
+    let img = null, start = null;
+
+    fileEl.addEventListener("change", e => {
+      const f = e.target.files[0];
+      if (!f) return;
+      const url = URL.createObjectURL(f);
+      img = new Image();
+      img.onload = () => {
+        start = performance.now();
+        requestAnimationFrame(animate);
+      };
+      img.src = url;
+    });
+
+    function animate(time) {
+      if (!img) return;
+      const t = ((time - start) / 2000) % 1; // loop every 2s
+      const x = -50 + t * 300; // moves left to right
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.drawImage(img, x, 50, 200, 200);
+      requestAnimationFrame(animate);
+    }
+  </script>
+</body>
+</html>
